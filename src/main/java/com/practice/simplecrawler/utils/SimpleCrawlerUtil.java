@@ -1,6 +1,8 @@
 package com.practice.simplecrawler.utils;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,7 @@ import org.springframework.util.Assert;
 
 @Component
 public class SimpleCrawlerUtil {
-	
+
 	public List<PageDetailsDto> crawl(String urlString) throws IOException {
 		return crawl(urlString, new ArrayList<>(),new ArrayList<>());
 	}
@@ -29,7 +31,7 @@ public class SimpleCrawlerUtil {
 				crawl(internalLink, alreadyVisited, pageDetails);
 			}
 		}
-			
+
 		return pageDetails;
 	}
 
@@ -37,19 +39,30 @@ public class SimpleCrawlerUtil {
 		List<String> internalLinks = new ArrayList<>();
 		List<String> externalLinks = new ArrayList<>();
 		List<String> staticResources = new ArrayList<>();
-		String baseUriOfDoc = doc.baseUri();
-		for (Element element : doc.select("a[href]")) {
-			if(element.absUrl("href").startsWith(baseUriOfDoc))
-				internalLinks.add(element.absUrl("href"));
-			else
-				externalLinks.add(element.absUrl("href"));
-		}
-		for(Element element : doc.select("img")) {
-			staticResources.add(element.absUrl("src"));
+		
+		try {
+			String baseUriOfDoc = getBaseUriFromUri(doc.baseUri());
+
+			for (Element element : doc.select("a[href]")) {
+				if(element.absUrl("href").startsWith(baseUriOfDoc))
+					internalLinks.add(element.absUrl("href"));
+				else
+					externalLinks.add(element.absUrl("href"));
+			}
+			for(Element element : doc.select("img")) {
+				staticResources.add(element.absUrl("src"));
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
 		}
 		return new PageDetailsDto(doc.location(), internalLinks, externalLinks, staticResources, LocalDateTime.now());
 	}
+
+	private String getBaseUriFromUri(String urlString) throws MalformedURLException {
+		URL url = new URL(urlString);
+		return url.getProtocol()+"://"+url.getHost();
+	}
 }
-		
-		
+
+
 
