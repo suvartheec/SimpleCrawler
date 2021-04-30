@@ -5,8 +5,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,27 +20,38 @@ import org.springframework.util.Assert;
 
 @Component
 public class SimpleCrawlerUtil {
+	private Logger logger = LogManager.getLogger();
 
-	public List<PageDetailsDto> crawl(String urlString) throws IOException {
-		return crawl(urlString, new ArrayList<>(),new ArrayList<>());
+	public Map<String, PageContents> crawl(String urlString) throws IOException {
+		return crawl(urlString, null, Collections.synchronizedMap(new HashMap<>()));
 	}
 
-	private List<PageDetailsDto> crawl(String urlString, List<String> alreadyVisited, List<PageDetailsDto> pageDetails) throws IOException {
+	private Map<String, PageContents> crawl(String urlString, String parent, Map<String, PageContents> pageContentsMap) throws IOException {
 		Assert.hasLength(urlString, "url cannot be blank");
+		logger.debug("processing:{}",urlString);
+		
 		Document doc = Jsoup.connect(urlString).get();
-		PageDetailsDto details = getPageDetails(doc);
-		pageDetails.add(details);
+		
+		//process the url
+		PageContents details = getPageContents(doc, parent);
+		pageContentsMap.put(getLinkWithoutParameters(urlString), details);
+		
+		//process all its children..
 		for (String internalLink : details.getInternalLinks()) {
-			if(!alreadyVisited.contains(internalLink)) {
-				alreadyVisited.add(internalLink);
-				crawl(internalLink, alreadyVisited, pageDetails);
+			//...but only if not done already
+			if(!pageContentsMap.containsKey(getLinkWithoutParameters(internalLink))) {
+				crawl(internalLink, urlString, pageContentsMap);
 			}
 		}
-
-		return pageDetails;
+		return pageContentsMap;
 	}
 
-	private PageDetailsDto getPageDetails(Document doc) {
+	private String getLinkWithoutParameters(String internalLink) throws MalformedURLException {
+		URL url = new URL(internalLink);
+		return url.getProtocol()+"://"+url.getHost()+url.getPath();
+	}
+
+	private PageContents getPageContents(Document doc, String parent) {
 		List<String> internalLinks = new ArrayList<>();
 		List<String> externalLinks = new ArrayList<>();
 		List<String> staticResources = new ArrayList<>();
@@ -55,7 +71,7 @@ public class SimpleCrawlerUtil {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		return new PageDetailsDto(doc.location(), internalLinks, externalLinks, staticResources, LocalDateTime.now());
+		return new PageContents(doc.location(),parent, internalLinks, externalLinks, staticResources, LocalDateTime.now());
 	}
 
 	private String getBaseUriFromUri(String urlString) throws MalformedURLException {
