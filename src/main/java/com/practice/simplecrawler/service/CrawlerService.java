@@ -5,6 +5,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -18,6 +20,8 @@ import com.practice.simplecrawler.utils.SimpleCrawlerUtil;
 @RestController
 @RequestMapping("/rest/crawler")
 public class CrawlerService {
+	
+	Logger logger = LogManager.getLogger();
 	
 	@Autowired
 	SimpleCrawlerUtil util;
@@ -33,14 +37,14 @@ public class CrawlerService {
 		if(!StringUtils.hasLength(urlString))
 			return ResponseEntity.badRequest().body("url missing");
 		try {
-			URL url = new URL(urlString);
+			//checking if proper url
+			new URL(urlString);
 			
 			return ResponseEntity.ok(util.crawl(urlString));
-			
-//			return ResponseEntity.ok("parsing of "+urlString+" complete");
 		} catch (MalformedURLException e) {
 			return ResponseEntity.badRequest().body("invalid url:"+urlString);
 		} catch (IOException e) {
+			logger.error(e);
 			return ResponseEntity.badRequest().body("Unable to process:"+urlString);
 		}
 	}
