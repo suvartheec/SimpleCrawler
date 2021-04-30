@@ -3,7 +3,11 @@ package com.practice.simplecrawler.utils;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class PageDetailsDto {
+/**
+ * @author SUVARTHEE
+ * Contains the information from a single page
+ */
+public class PageContents {
 
 	private String url;
 	private String parent;
@@ -13,14 +17,25 @@ public class PageDetailsDto {
 	private LocalDateTime parsedOn;
 	
 	
-	public PageDetailsDto() {
+	public PageContents() {
 		super();
 	}
 
-	public PageDetailsDto(String url, List<String> internalLinks, List<String> externalStrings,
+	public PageContents(String url, List<String> internalLinks, List<String> externalStrings,
 			List<String> staticResources, LocalDateTime parsedOn) {
 		super();
 		this.url = url;
+		this.internalLinks = internalLinks;
+		this.externalStrings = externalStrings;
+		this.staticResources = staticResources;
+		this.parsedOn = parsedOn;
+	}
+	
+	public PageContents(String url, String parent, List<String> internalLinks, List<String> externalStrings,
+			List<String> staticResources, LocalDateTime parsedOn) {
+		super();
+		this.url = url;
+		this.parent = parent;
 		this.internalLinks = internalLinks;
 		this.externalStrings = externalStrings;
 		this.staticResources = staticResources;
@@ -62,5 +77,8 @@ public class PageDetailsDto {
 	public void setParent(String parent) {
 		this.parent = parent;
 	}
+	
+	
+	
 	
 }
