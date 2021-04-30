@@ -4,17 +4,20 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.practice.simplecrawler.utils.PageContents;
 import com.practice.simplecrawler.utils.SimpleCrawlerUtil;
 
 @RestController
@@ -26,11 +29,6 @@ public class CrawlerService {
 	@Autowired
 	SimpleCrawlerUtil util;
 
-	@ResponseBody
-	@RequestMapping("/getAll")
-	public List<String> getAllSites(){
-		return null;
-	}
 	
 	@RequestMapping("/crawl")
 	public ResponseEntity<?> crawl(@RequestParam(name="url", defaultValue = "https://suvartheec.github.io") String urlString){
@@ -40,7 +38,17 @@ public class CrawlerService {
 			//checking if proper url
 			new URL(urlString);
 			
-			return ResponseEntity.ok(util.crawl(urlString));
+			//initializing stopwatch to check performance
+			StopWatch s = new StopWatch();
+			
+			//perform the crawl
+			s.start();
+			Map<String, PageContents> result = util.crawl(urlString);
+			s.stop();
+			
+			//log and return result
+			logger.debug("Time taken in millies:"+s.getTotalTimeMillis());
+			return ResponseEntity.ok(result);
 		} catch (MalformedURLException e) {
 			return ResponseEntity.badRequest().body("invalid url:"+urlString);
 		} catch (IOException e) {
