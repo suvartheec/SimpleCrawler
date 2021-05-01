@@ -123,15 +123,17 @@ class SimplecrawlerApplicationTests {
 
 		//Contains 4 pages (including the index) and the root url hence should return 5
 		assertThat(crawlResult.size()).isEqualTo(5);
-		
-		//crawlResult.
+		assertThat(crawlResult.containsKey("https://suvartheec.github.io"));
+		assertThat(crawlResult.containsKey("https://suvartheec.github.io/test1.html"));
+		assertThat(crawlResult.containsKey("https://suvartheec.github.io/test2.html"));
+		assertThat(crawlResult.containsKey("https://suvartheec.github.io/test3.html"));
+		assertThat(crawlResult.containsKey("https://suvartheec.github.io/index.html"));
 	}
 	
 	@Test
 	void crawl_testNonExistingLink() throws IOException {
-		//This site has been created to test the crawl functionality. Contains 4 pages (including the index)
 		String linkToTest = "http://suvartheec-non-existing.does-not-exist.io/";
-		assertThatExceptionOfType(IOException.class).isThrownBy(()->utils.crawl(linkToTest));
+		assertThat(utils.crawl(linkToTest)).isNotNull();
 	}
 	
 }
