@@ -9,6 +9,7 @@ This is built on Spring boot and uses JSoup library to connect to and parse HTML
 2. If using an IDE, you can run as Spring boot application in IDE
 3. Alternatively execute the following from inside the project root:
 > mvn clean package spring-boot:repackage
+> 
 > java -jar target/simplecrawler-0.0.1-SNAPSHOT.jar
 
 ## Using the application
