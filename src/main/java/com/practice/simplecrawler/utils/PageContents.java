@@ -1,7 +1,7 @@
 package com.practice.simplecrawler.utils;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author SUVARTHEE
@@ -11,9 +11,9 @@ public class PageContents {
 
 	private String url;
 	private String parent;
-	private List<String> internalLinks;
-	private List<String> externalStrings;
-	private List<String> staticResources;
+	private Collection<String> internalLinks;
+	private Collection<String> externalStrings;
+	private Collection<String> staticResources;
 	private LocalDateTime parsedOn;
 	
 	
@@ -21,8 +21,8 @@ public class PageContents {
 		super();
 	}
 
-	public PageContents(String url, List<String> internalLinks, List<String> externalStrings,
-			List<String> staticResources, LocalDateTime parsedOn) {
+	public PageContents(String url, Collection<String> internalLinks, Collection<String> externalStrings,
+			Collection<String> staticResources, LocalDateTime parsedOn) {
 		super();
 		this.url = url;
 		this.internalLinks = internalLinks;
@@ -31,8 +31,8 @@ public class PageContents {
 		this.parsedOn = parsedOn;
 	}
 	
-	public PageContents(String url, String parent, List<String> internalLinks, List<String> externalStrings,
-			List<String> staticResources, LocalDateTime parsedOn) {
+	public PageContents(String url, String parent, Collection<String> internalLinks, Collection<String> externalStrings,
+			Collection<String> staticResources, LocalDateTime parsedOn) {
 		super();
 		this.url = url;
 		this.parent = parent;
@@ -47,22 +47,22 @@ public class PageContents {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public List<String> getInternalLinks() {
+	public Collection<String> getInternalLinks() {
 		return internalLinks;
 	}
-	public void setInternalLinks(List<String> internalLinks) {
+	public void setInternalLinks(Collection<String> internalLinks) {
 		this.internalLinks = internalLinks;
 	}
-	public List<String> getExternalStrings() {
+	public Collection<String> getExternalStrings() {
 		return externalStrings;
 	}
-	public void setExternalStrings(List<String> externalStrings) {
+	public void setExternalStrings(Collection<String> externalStrings) {
 		this.externalStrings = externalStrings;
 	}
-	public List<String> getStaticResources() {
+	public Collection<String> getStaticResources() {
 		return staticResources;
 	}
-	public void setStaticResources(List<String> staticResources) {
+	public void setStaticResources(Collection<String> staticResources) {
 		this.staticResources = staticResources;
 	}
 	public LocalDateTime getParsedOn() {
