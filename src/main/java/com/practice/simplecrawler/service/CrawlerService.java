@@ -35,6 +35,7 @@ public class CrawlerService {
 		try {
 			//checking if proper url
 			new URL(urlString);
+			logger.debug("Starting crawl for:"+urlString);
 			
 			//initializing stopwatch to check performance
 			StopWatch s = new StopWatch();
@@ -46,6 +47,8 @@ public class CrawlerService {
 			
 			//log and return result
 			logger.debug("Time taken in millies:"+s.getTotalTimeMillis());
+			logger.debug("Total children at top level:"+result.keySet().size());
+			
 			return ResponseEntity.ok(result);
 		} catch (MalformedURLException e) {
 			return ResponseEntity.badRequest().body("invalid url:"+urlString);
