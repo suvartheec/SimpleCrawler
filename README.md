@@ -21,7 +21,7 @@ The application will crawl the url http://suvartheec.github.io/ by default
 
 ## The output
 The application will return a JSON response in a key-value structure (i.e. a Map)
-Each key is the URLs accessible from the supplied (or default) URL.
+Each key is the URLs accessible from the supplied (or default) URL, including the URL itself.
 Each value is the a summary of that link (the key). It wil have 3 lists: 
 1. List of all the internal URLs present in that page
 2. List of all the external URLs present in that page
